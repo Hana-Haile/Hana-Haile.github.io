@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+
+    <title>COVID-19 and Pathology Results Dashboard</title>
+
+    <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+
+    <style>
+        body {
+            background-color: rgb(168, 223, 203);
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Relationship Between COVID-19 and Pathology Results</h1>
+
+    <p>
+        This dashboard explores differences in pathology results between patients with and without COVID-19. It compares five pathology measures: ferritin, troponin, neutrophils, lymphocytes and CRP. Results can also be examined across age groups, gender and ethnicity using weighted averages.
+    </p>
+
+    
+
+<h2>Pathology Results by COVID-19 Status</h2>
+
+<label for="covidOutcome">Select pathology measure:</label>
+<select id="covidOutcome">
+    <option value="Ferritin">Ferritin</option>
+    <option value="Troponin">Troponin</option>
+    <option value="Neutrophils">Neutrophils</option>
+    <option value="Lymphocytes">Lymphocytes</option>
+    <option value="CRP">CRP</option>
+</select>
+
+<div id="covidDiv"></div>
+
+<h2>Pathology Results by Patient Characteristics</h2>
+
+<label for="outcome">Pathology result:</label>
+<select id="outcome">
+    <option value="Ferritin">Ferritin</option>
+    <option value="Troponin">Troponin</option>
+    <option value="Neutrophils">Neutrophils</option>
+    <option value="Lymphocytes">Lymphocytes</option>
+    <option value="CRP">CRP</option>
+</select>
+
+<br>
+
+<label for="group">Break down results by:</label>
+<select id="group">
+    <option value="old">Age group</option>
+    <option value="male">Gender</option>
+    <option value="white">Race</option>
+</select>
+
+<br><br>
+
+<div id="myDiv"></div>
+
+
+<h2>Compare Two Pathology Measures</h2>
+
+<p>
+    Each point represents an aggregated patient subgroup.
+    Sample sizes are shown when hovering over the points.
+</p>
+
+<label for="xMeasure">Horizontal axis:</label>
+<select id="xMeasure">
+    <option value="Ferritin">Ferritin</option>
+    <option value="Troponin">Troponin</option>
+    <option value="Neutrophils" selected>Neutrophils</option>
+    <option value="Lymphocytes">Lymphocytes</option>
+    <option value="CRP">CRP</option>
+</select>
+
+<br><br>
+
+<label for="yMeasure">Vertical axis:</label>
+<select id="yMeasure">
+    <option value="Ferritin">Ferritin</option>
+    <option value="Troponin">Troponin</option>
+    <option value="Neutrophils">Neutrophils</option>
+    <option value="Lymphocytes">Lymphocytes</option>
+    <option value="CRP" selected>CRP</option>
+</select>
+
+<br><br>
+
+<div id="scatterDiv"></div>
+
+    <script>
+
+        const data = 
+[{"COVID":0,"old":0,"male":0,"white":0,"Ferritin":80.7962,"Troponin":15.0776,"Neutrophils":2.9622,"Lymphocytes":1.009,"CRP":72.698,"sample":88},
+
+{"COVID":1,"old":0,"male":0,"white":0,"Ferritin":78.2594,"Troponin":14.5232,"Neutrophils":6.5465,"Lymphocytes":1.0095,"CRP":67.4789,"sample":23},
+
+{"COVID":0,"old":1,"male":0,"white":0,"Ferritin":80.1051,"Troponin":15.0196,"Neutrophils":2.9655,"Lymphocytes":1.0044,"CRP":73.603,"sample":33},
+
+{"COVID":1,"old":1,"male":0,"white":0,"Ferritin":79.1869,"Troponin":14.8105,"Neutrophils":21.2747,"Lymphocytes":0.6642,"CRP":76.098,"sample":38},
+
+{"COVID":0,"old":0,"male":1,"white":0,"Ferritin":80.293,"Troponin":15.2164,"Neutrophils":2.9697,"Lymphocytes":1.0025,"CRP":85.2045,"sample":83},
+
+{"COVID":1,"old":0,"male":1,"white":0,"Ferritin":82.4478,"Troponin":15.3914,"Neutrophils":11.2725,"Lymphocytes":0.86,"CRP":92.2727,"sample":24},
+
+{"COVID":0,"old":1,"male":1,"white":0,"Ferritin":81.2627,"Troponin":15.1298,"Neutrophils":3.0922,"Lymphocytes":1.0068,"CRP":87.3127,"sample":35},
+
+{"COVID":1,"old":1,"male":1,"white":0,"Ferritin":81.1032,"Troponin":15.2505,"Neutrophils":17.6567,"Lymphocytes":0.71,"CRP":85.317,"sample":64},
+
+{"COVID":0,"old":0,"male":0,"white":1,"Ferritin":80.3315,"Troponin":15.1271,"Neutrophils":2.9658,"Lymphocytes":1.0038,"CRP":72.0842,"sample":468},
+
+{"COVID":1,"old":0,"male":0,"white":1,"Ferritin":81.9102,"Troponin":14.701,"Neutrophils":8.5887,"Lymphocytes":0.9345,"CRP":74.6818,"sample":176},
+
+{"COVID":0,"old":1,"male":0,"white":1,"Ferritin":80.7869,"Troponin":15.1487,"Neutrophils":3.0018,"Lymphocytes":0.9997,"CRP":76.5904,"sample":195},
+
+{"COVID":1,"old":1,"male":0,"white":1,"Ferritin":81.2481,"Troponin":14.9856,"Neutrophils":20.0563,"Lymphocytes":0.6955,"CRP":77.0856,"sample":246},
+
+{"COVID":0,"old":0,"male":1,"white":1,"Ferritin":80.5322,"Troponin":14.9284,"Neutrophils":2.9699,"Lymphocytes":1.0067,"CRP":84.4454,"sample":353},
+
+{"COVID":1,"old":0,"male":1,"white":1,"Ferritin":80.7558,"Troponin":15.1274,"Neutrophils":9.952,"Lymphocytes":0.8898,"CRP":83.6312,"sample":190},
+
+{"COVID":0,"old":1,"male":1,"white":1,"Ferritin":81.1269,"Troponin":15.0935,"Neutrophils":2.9539,"Lymphocytes":0.9993,"CRP":89.6938,"sample":133},
+
+{"COVID":1,"old":1,"male":1,"white":1,"Ferritin":79.9424,"Troponin":14.9526,"Neutrophils":21.6836,"Lymphocytes":0.6442,"CRP":89.0144,"sample":241}]
+
+   function weightedAve(values, weights) {
+    let totalWeighted = 0;
+    let totalWeight = 0;
+
+    for (let i = 0; i < values.length; i++) {
+        totalWeighted += values[i] * weights[i];
+        totalWeight += weights[i];
+    }
+
+    return totalWeighted / totalWeight;
+}
+   
+
+function myFunction() {
+    const outcome = document.getElementById("outcome").value;
+    const groupBy = document.getElementById("group").value;
+
+    const groupLabels = {
+    old: ["Young", "Old"],
+    male: ["Female", "Male"],
+    white: ["Non-white", "White"]
+};
+
+    const covidLabels = ["No COVID-19", "COVID-19"];
+    const plot = [];
+
+    for (let c = 0; c < 2; c++) {
+        const averages = [];
+
+        for (let g = 0; g < 2; g++) {
+            const subset = data.filter(
+                row => row.COVID === c && row[groupBy] === g
+            );
+
+            const values = subset.map(row => row[outcome]);
+            const weights = subset.map(row => row.sample);
+
+            averages.push(weightedAve(values, weights));
+        }
+
+        plot.push({
+            x: groupLabels[groupBy],
+            y: averages,
+            type: "bar",
+            name: covidLabels[c]
+        });
+    }
+
+    const groupNames = {
+    old: "Age",
+    male: "Gender",
+    white: "Race"
+};
+
+const layout = {
+    title: outcome + " Levels by COVID-19 Status and " + groupNames[groupBy],
+    xaxis: { title: groupNames[groupBy] },
+    yaxis: { title: "Weighted Average " + outcome },
+    barmode: "group"
+};
+
+    Plotly.newPlot("myDiv", plot, layout);
+}
+
+document.getElementById("outcome").addEventListener("change", myFunction);
+document.getElementById("group").addEventListener("change", myFunction);
+
+myFunction();
+
+
+function makeScatterPlot() {
+    const xMeasure = document.getElementById("xMeasure").value;
+    const yMeasure = document.getElementById("yMeasure").value;
+
+    const covidGroups = [
+        { value: 0, label: "No COVID-19" },
+        { value: 1, label: "COVID-19" }
+    ];
+
+    const plot = covidGroups.map(group => {
+        const subset = data.filter(
+            row => row.COVID === group.value
+        );
+
+        return {
+            x: subset.map(row => row[xMeasure]),
+            y: subset.map(row => row[yMeasure]),
+
+            text: subset.map(row =>
+                "Age: " + (row.old === 1 ? "Old" : "Young") +
+                "<br>Gender: " + (row.male === 1 ? "Male" : "Female") +
+                "<br>Race: " + (row.white === 1 ? "White" : "Non-white") +
+                "<br>Sample size: " + row.sample
+            ),
+
+            mode: "markers",
+            type: "scatter",
+            name: group.label,
+            hoverinfo: "x+y+text"
+        };
+    });
+
+    const layout = {
+        title: yMeasure + " Compared with " + xMeasure,
+        xaxis: { title: xMeasure },
+        yaxis: { title: yMeasure }
+    };
+
+    Plotly.newPlot("scatterDiv", plot, layout);
+}
+
+makeScatterPlot();
+
+document.getElementById("xMeasure").addEventListener("change", makeScatterPlot);
+document.getElementById("yMeasure").addEventListener("change", makeScatterPlot);
+
+
+function makeCovidPlot() {
+    const outcome = document.getElementById("covidOutcome").value;
+
+    const covidGroups = [
+        { value: 0, label: "No COVID-19" },
+        { value: 1, label: "COVID-19" }
+    ];
+
+    const plot = covidGroups.map(group => {
+        const subset = data.filter(
+            row => row.COVID === group.value
+        );
+
+        const values = subset.map(row => row[outcome]);
+        const weights = subset.map(row => row.sample);
+
+        return {
+            x: [group.label],
+            y: [weightedAve(values, weights)],
+            type: "bar",
+            name: group.label
+        };
+    });
+
+    const layout = {
+        title: outcome + " by COVID-19 Status",
+        xaxis: { title: "COVID-19 Status" },
+        yaxis: { title: "Weighted Average " + outcome },
+        showlegend: false
+    };
+
+    Plotly.newPlot("covidDiv", plot, layout);
+}
+
+document.getElementById("covidOutcome")
+    .addEventListener("change", makeCovidPlot);
+
+makeCovidPlot();
+
+   </script>
+
+</body>
+
+</html>
